@@ -1,34 +1,41 @@
-class Singleton:
-    _instance = None
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(Singleton, cls).__new__(cls)
-        return cls._instance
-
-class PaymentStrategy:
-    def pay(self, amount):
+from abc import abstractmethod, ABC
+class IPizzaBase(ABC):
+    @abstractmethod
+    def cost(self) -> int:
         pass
+class PizzaBase(IPizzaBase):
+    def __init__(self, cost):
+        self.cost = cost
+    def cost(self):
+        return self.cost
+class IDecorator(IPizzaBase):
+    @abstractmethod
+    def name(self) -> str:
+        pass
+class PizzaSalyami(IDecorator):
+    def __init__(self,  traditional : IPizzaBase, pizza_cost):
+        self.__traditional = traditional
+        self.__cost = pizza_cost
+        self.__name = "Пицца Салями"
 
-class CreditCardPayment(PaymentStrategy):
-    def pay(self, amount):
-        print(f"Оплата с помощью кредитной карты: {amount} тенге")
+    def cost(self) -> float:
+        return (self.__cost + self.__traditional.cost()) * 100.5
+    def name(self) -> str:
+        return self.__name
+class PizzaBolognese(IDecorator):
+    def __init__(self, thin : IPizzaBase, pizza_cost : int):
+        self.__thin = thin
+        self.__cost = pizza_cost
+        self.__name = "Пицца Болоньезе"
+    def cost(self) -> float:
+        return (self.__cost + self.__thin.cost) * 100.25
 
-class KaspiPayment(PaymentStrategy):
-    def pay(self, amount):
-        print(f"Оплата через Kaspi: {amount} тенге")
+    def name(self) -> str:
+        return self.__name
 
-class Order:
-    def __init__(self, total_amount, payment_strategy):
-        self.total_amount = total_amount
-        self.payment_strategy = payment_strategy
+def print_pizza(pizza : IDecorator) -> None:
+    print(f"Ваша пицца {pizza.name()}, ее стоимость с учетом теста = {pizza.cost()} тенге")
+pizza = PizzaBase(10)
+Bolongnese = PizzaBolognese(pizza, 10)
+print_pizza(Bolongnese)
 
-    def checkout(self):
-        self.payment_strategy.pay(self.total_amount)
-
-
-
-if __name__ == "__main__":
-    order = Order(1000, CreditCardPayment())
-
-    order.checkout()
