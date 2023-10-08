@@ -1,41 +1,53 @@
-from abc import abstractmethod, ABC
-class IPizzaBase(ABC):
+from abc import ABC, abstractmethod
+from random import randint
+
+class MonopolyGame(ABC):
     @abstractmethod
-    def cost(self) -> int:
+    def play(self):
         pass
-class PizzaBase(IPizzaBase):
-    def __init__(self, cost):
-        self.cost = cost
-    def cost(self):
-        return self.cost
-class IDecorator(IPizzaBase):
-    @abstractmethod
-    def name(self) -> str:
-        pass
-class PizzaSalyami(IDecorator):
-    def __init__(self,  traditional : IPizzaBase, pizza_cost):
-        self.__traditional = traditional
-        self.__cost = pizza_cost
-        self.__name = "Пицца Салями"
 
-    def cost(self) -> float:
-        return (self.__cost + self.__traditional.cost()) * 100.5
-    def name(self) -> str:
-        return self.__name
-class PizzaBolognese(IDecorator):
-    def __init__(self, thin : IPizzaBase, pizza_cost : int):
-        self.__thin = thin
-        self.__cost = pizza_cost
-        self.__name = "Пицца Болоньезе"
-    def cost(self) -> float:
-        return (self.__cost + self.__thin.cost) * 100.25
+class BasicMonopolyGame(MonopolyGame):
+    def __init__(self):
+        self.players = []
+        self.current_player = 0
+        self.board = "West Monopoly"
 
-    def name(self) -> str:
-        return self.__name
+    def play(self):
+        while True:
+            print(f"Rolling dices: ..., and dices show {randint(2, 12)}")
+            print(f"Now your turn {basic_game.players[randint(0,1)].name}")
+            print("Will you throw dices?")
+            action = input()
 
-def print_pizza(pizza : IDecorator) -> None:
-    print(f"Ваша пицца {pizza.name()}, ее стоимость с учетом теста = {pizza.cost()} тенге")
-pizza = PizzaBase(10)
-Bolongnese = PizzaBolognese(pizza, 10)
-print_pizza(Bolongnese)
+            if action == "yes":
+                continue
+            else:
+                exit()
 
+class MonopolyGameDecorator(MonopolyGame, ABC):
+    def __init__(self, game):
+        self._game = game
+
+class LuxuryEditionDecorator(MonopolyGameDecorator):
+    def play(self):
+        self._game.play()
+        print("Luxury edition features are included.")
+
+class SpeedyVersionDecorator(MonopolyGameDecorator):
+    def play(self):
+        self._game.play()
+        print("Speedy version rules are applied.")
+
+class Player:
+    def __init__(self, name, initial_balance=1500):
+        self.name = name
+        self.balance = initial_balance
+
+if __name__ == "__main__":
+    basic_game = BasicMonopolyGame()
+    player1 = Player("Nurali")
+    player2 = Player("Rahat")
+    basic_game.players = [player1, player2]
+
+    print("Playing Basic Monopoly Game:")
+    print(basic_game.play())
