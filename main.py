@@ -1,11 +1,15 @@
-from FahrenheitTemperature import FahrenheitTemperature
-from CelsiusTemperature import CelsiusTemperature
-from KelvinTemperature import KelvinTemperature
-from TemperatureAdapter import TemperatureAdapter
+from DealerCenter import DealerCenter
+from Factory import Factory
 
-fahrenheit_temp = FahrenheitTemperature()
-celsius_temp = CelsiusTemperature(0)
-kelvin_temp = KelvinTemperature(273)
-
-adapter_temp = TemperatureAdapter(celsius_temp.temperature)
-print(adapter_temp.get_temperature() + kelvin_temp.get_temperature() + fahrenheit_temp.get_temperature())
+if __name__ == "__main__":
+    names = ['Allur', 'Bergimber',
+             'Sakamato']
+    factory = Factory()
+    dealers = [DealerCenter(name, factory) for name in names]
+    for dealer in dealers:
+        print("*" * 30)
+        dealer.create_order()
+    print("*" * 4 + "Завод приступает к выполнению заказов" + 4 * "*")
+    for _ in range(4):
+        print("*" * 30)
+        factory.processing_order()
